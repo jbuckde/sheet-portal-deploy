@@ -1,0 +1,35 @@
+issuer: https://192.168.1.25/dex
+
+storage:
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+
+oauth2:
+  skipApprovalScreen: true
+
+enablePasswordDB: true
+
+staticClients:
+  - id: sheet-portal
+    secret: sheet-portal-secret
+    redirectURIs:
+      - https://192.168.1.25/auth/callback/dex
+    name: Sheet Portal
+
+staticPasswords:
+  - email: admin@test.local
+    hash: "$2y$10$Eh9xef206g5R3nkQvBZsf.FXGKN9dChjfaaRSxbIJzVzW4gQm7lbm"
+    username: admin
+    userID: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+
+  - email: musiker@test.local
+    hash: "$2y$10$Eh9xef206g5R3nkQvBZsf.FXGKN9dChjfaaRSxbIJzVzW4gQm7lbm"
+    username: musiker
+    userID: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+
+  - email: distributor@test.local
+    hash: "$2y$10$Eh9xef206g5R3nkQvBZsf.FXGKN9dChjfaaRSxbIJzVzW4gQm7lbm"
+    username: distributor
+    userID: "cccccccc-cccc-cccc-cccc-cccccccccccc"

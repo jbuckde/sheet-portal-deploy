@@ -1,0 +1,16 @@
+metadata_dir = "/meta"
+data_dir = "/data"
+db_engine = "lmdb"
+
+replication_factor = 1
+
+rpc_bind_addr = "0.0.0.0:3901"
+rpc_public_addr = "garage:3901"
+rpc_secret = "abf5694d41b7755a19a398be797db2711124764b5bd208f9a7af2f8cfcbcf47b"
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "0.0.0.0:3900"
+
+[admin]
+api_bind_addr = "0.0.0.0:3903"

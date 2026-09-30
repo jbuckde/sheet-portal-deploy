@@ -1,0 +1,59 @@
+# Caddyfile — production
+# Replace YOUR_DOMAIN with the actual domain or LAN IP.
+#
+# For a public domain: set tls to `tls {$ACME_EMAIL}` for Let's Encrypt ACME.
+# For a private LAN IP (no public domain): use `tls internal` — Caddy generates
+# a self-signed cert. The browser will show a one-time "Not secure" warning;
+# accept it and the cert is trusted for the session.
+
+{
+  # Disable auto-HTTPS so Caddy does not try ACME for the LAN IP.
+  auto_https off
+}
+
+:80 {
+  redir https://{host}{uri} permanent
+}
+
+:443 {
+  # Pre-generated self-signed cert (tls internal fails under snap-confined Docker).
+  # Cert lives at ~/snap/docker/common/sheet-portal/certs/ on the host,
+  # mounted into the container at /certs/.
+  tls /certs/cert.pem /certs/key.pem
+
+  # Backend API and auth
+  handle /api/* {
+    reverse_proxy api:3000
+  }
+  handle /auth/* {
+    reverse_proxy api:3000
+  }
+
+  # Dex OIDC provider (only active when DEX_ENABLED=true in the API)
+  handle /dex/* {
+    reverse_proxy dex:5556
+  }
+
+  # Grafana — restricted to admin; protect with basic auth if not on a VPN
+  handle /monitoring* {
+    reverse_proxy grafana:3000
+  }
+
+  # Caddy metrics for Prometheus (internal only — not proxied externally)
+  handle /caddy-metrics {
+    metrics
+  }
+
+  # Frontend SPA — all other requests go to the frontend container
+  handle {
+    reverse_proxy frontend:80
+  }
+
+  # Security headers (supplement @fastify/helmet on the API side)
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+}

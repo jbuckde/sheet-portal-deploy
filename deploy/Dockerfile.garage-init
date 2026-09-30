@@ -1,0 +1,6 @@
+FROM dxflrs/garage:v1.0.1 AS garage-bin
+FROM alpine:3
+COPY --from=garage-bin /garage /garage
+# Create placeholder files so Docker bind-mounts replace files, not create directories
+RUN mkdir -p /etc && touch /etc/garage.toml && touch /garage-init.sh
+ENTRYPOINT ["/bin/sh", "/garage-init.sh"]

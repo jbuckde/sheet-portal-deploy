@@ -1,0 +1,113 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: resource-alerts
+    folder: Sheet Portal
+    interval: 1m
+    rules:
+
+      - uid: cpu-high
+        title: CPU usage > 85%
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model:
+              expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+              instant: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: "-100"
+            model:
+              conditions:
+                - evaluator: { params: [85], type: gt }
+                  operator: { type: and }
+                  query: { params: [A] }
+                  reducer: { params: [], type: avg }
+                  type: query
+              datasource: { type: __expr__, uid: "-100" }
+              expression: A
+              refId: C
+              type: classic_conditions
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: CPU usage is above 85% for 5 minutes
+        labels:
+          severity: warning
+
+      - uid: memory-high
+        title: Memory usage > 90%
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model:
+              expr: 100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))
+              instant: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: "-100"
+            model:
+              conditions:
+                - evaluator: { params: [90], type: gt }
+                  operator: { type: and }
+                  query: { params: [A] }
+                  reducer: { params: [], type: avg }
+                  type: query
+              datasource: { type: __expr__, uid: "-100" }
+              expression: A
+              refId: C
+              type: classic_conditions
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: Memory usage is above 90% for 5 minutes
+        labels:
+          severity: warning
+
+      - uid: disk-high
+        title: Disk usage > 85%
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model:
+              expr: 100 * (1 - (node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"}))
+              instant: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: C
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: "-100"
+            model:
+              conditions:
+                - evaluator: { params: [85], type: gt }
+                  operator: { type: and }
+                  query: { params: [A] }
+                  reducer: { params: [], type: avg }
+                  type: query
+              datasource: { type: __expr__, uid: "-100" }
+              expression: A
+              refId: C
+              type: classic_conditions
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: Disk usage on / is above 85%
+        labels:
+          severity: critical
