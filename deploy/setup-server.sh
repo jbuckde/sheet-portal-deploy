@@ -14,7 +14,7 @@ set -euo pipefail
 APP_USER="sheetportal"
 APP_HOME="/home/${APP_USER}"
 APP_DIR="${APP_HOME}"
-REPO_RAW="https://raw.githubusercontent.com/jbuckde/sheet-portal/main"
+REPO_RAW="https://raw.githubusercontent.com/jbuckde/sheet-portal-deploy/main"
 COMPOSE_FILE="docker-compose.production.yml"
 
 # ---------------------------------------------------------------------------
