@@ -136,7 +136,11 @@ download() {
   chown "${APP_USER}:${APP_USER}" "${dst}"
 }
 
-mkdir -p "${APP_DIR}/deploy/grafana/provisioning" "${APP_DIR}/deploy/grafana/dashboards"
+mkdir -p \
+  "${APP_DIR}/deploy/grafana/provisioning/datasources" \
+  "${APP_DIR}/deploy/grafana/provisioning/dashboards" \
+  "${APP_DIR}/deploy/grafana/provisioning/alerting" \
+  "${APP_DIR}/deploy/grafana/dashboards"
 chown -R "${APP_USER}:${APP_USER}" "${APP_DIR}/deploy"
 
 for f in \
@@ -147,8 +151,12 @@ for f in \
   "deploy/Caddyfile" \
   "deploy/dex-config.yaml" \
   "deploy/prometheus.yml" \
-  "deploy/grafana/provisioning/datasources.yaml" \
-  "deploy/grafana/provisioning/dashboards.yaml"
+  "deploy/grafana/provisioning/datasources/prometheus.yaml" \
+  "deploy/grafana/provisioning/dashboards/sheet-portal.yaml" \
+  "deploy/grafana/provisioning/alerting/resource-alerts.yaml" \
+  "deploy/grafana/dashboards/caddy.json" \
+  "deploy/grafana/dashboards/postgres.json" \
+  "deploy/grafana/dashboards/node-exporter.json"
 do
   dst="${APP_DIR}/${f}"
   mkdir -p "$(dirname "$dst")"
